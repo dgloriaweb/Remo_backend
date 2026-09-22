@@ -1,0 +1,390 @@
+openapi: 3.0.3
+info:
+  title: 'remo_backend API Documentation'
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://127.0.0.1:8083'
+tags:
+  -
+    name: Auth
+    description: 'User registration and authentication.'
+  -
+    name: Expenses
+    description: 'Import and manage expense rows.'
+  -
+    name: System
+    description: 'Endpoints related to application health and monitoring'
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'You can retrieve your token by visiting your dashboard and clicking <b>Generate API token</b>.'
+security:
+  -
+    default: []
+paths:
+  /api/register:
+    post:
+      summary: Register
+      operationId: register
+      description: 'Create a user and return an API token.'
+      parameters: []
+      responses:
+        201:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  user:
+                    id: 1
+                    name: 'Test User'
+                    email: test.user@example.com
+                  token: '1|{token}'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Test User'
+                      email:
+                        type: string
+                        example: test.user@example.com
+                  token:
+                    type: string
+                    example: '1|{token}'
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'User name.'
+                  example: '{{name}}'
+                email:
+                  type: string
+                  description: 'User email address.'
+                  example: '{{email}}'
+                password:
+                  type: string
+                  description: Password.
+                  example: '{{password}}'
+                password_confirmation:
+                  type: string
+                  description: 'Must match password.'
+                  example: '{{password}}'
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+      security: []
+  /api/login:
+    post:
+      summary: Login
+      operationId: login
+      description: 'Authenticate a user and return an API token.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  user:
+                    id: 1
+                    name: 'Test User'
+                    email: test.user@example.com
+                  token: '1|{token}'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Test User'
+                      email:
+                        type: string
+                        example: test.user@example.com
+                  token:
+                    type: string
+                    example: '1|{token}'
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'User email address.'
+                  example: '{{email}}'
+                password:
+                  type: string
+                  description: Password.
+                  example: '{{password}}'
+              required:
+                - email
+                - password
+      security: []
+  /api/auth:
+    post:
+      summary: Auth
+      operationId: auth
+      description: 'Authenticate a user and return an API token.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  user:
+                    id: 1
+                    name: 'Test User'
+                    email: test.user@example.com
+                  token: '1|{token}'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: 'Test User'
+                      email:
+                        type: string
+                        example: test.user@example.com
+                  token:
+                    type: string
+                    example: '1|{token}'
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'User email address.'
+                  example: '{{email}}'
+                password:
+                  type: string
+                  description: Password.
+                  example: '{{password}}'
+              required:
+                - email
+                - password
+      security: []
+  /api/user:
+    get:
+      summary: 'Current user'
+      operationId: currentUser
+      description: 'Return the authenticated user.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 1
+                  name: 'Test User'
+                  email: test.user@example.com
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: 'Test User'
+                  email:
+                    type: string
+                    example: test.user@example.com
+      tags:
+        - Auth
+  /api/logout:
+    post:
+      summary: Logout
+      operationId: logout
+      description: 'Revoke the current API token.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+      tags:
+        - Auth
+  /api/expenses:
+    get:
+      summary: 'List expenses'
+      operationId: listExpenses
+      description: 'List expenses for the authenticated user (paginated).'
+      parameters:
+        -
+          in: query
+          name: per_page
+          description: 'Items per page (max 200).'
+          example: 50
+          required: false
+          schema:
+            type: integer
+            description: 'Items per page (max 200).'
+            example: 50
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  data:
+                    current_page: 1
+                    data:
+                      -
+                        id: 1
+                        user_id: 1
+                        title: 'Namesco ltd domain renewal'
+                        amount: '-22.99'
+                        currency: GBP
+                        transaction_date: null
+                        due_date: '2027-04-16'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        example: 1
+                      data:
+                        type: array
+                        example:
+                          -
+                            id: 1
+                            user_id: 1
+                            title: 'Namesco ltd domain renewal'
+                            amount: '-22.99'
+                            currency: GBP
+                            transaction_date: null
+                            due_date: '2027-04-16'
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_id:
+                              type: integer
+                              example: 1
+                            title:
+                              type: string
+                              example: 'Namesco ltd domain renewal'
+                            amount:
+                              type: string
+                              example: '-22.99'
+                            currency:
+                              type: string
+                              example: GBP
+                            transaction_date:
+                              type: string
+                              example: null
+                              nullable: true
+                            due_date:
+                              type: string
+                              example: '2027-04-16'
+      tags:
+        - Expenses
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                per_page:
+                  type: integer
+                  description: 'Must be at least 1. Must not be greater than 200.'
+                  example: 1
+                  nullable: true
+  /api/healthcheck:
+    get:
+      summary: Healthcheck
+      operationId: healthcheck
+      description: 'Verify API server operational status.'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: ok
+                  timestamp: '2026-08-31T10:45:00Z'
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    example: '2026-08-31T10:45:00Z'
+      tags:
+        - System
+      security: []
